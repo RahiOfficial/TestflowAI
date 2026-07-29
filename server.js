@@ -1,8 +1,8 @@
 require('dotenv').config();
 
 // 0. Bypass Windows DNS SRV Lookup Errors (Fixes querySrv ECONNREFUSED)
-const dns = require('dns');
-dns.setServers(['8.8.8.8', '8.8.4.4']);
+// const dns = require('dns');
+// dns.setServers(['8.8.8.8', '8.8.4.4']);
 
 const express = require('express');
 const multer = require('multer');
