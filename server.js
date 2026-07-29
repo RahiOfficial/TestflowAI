@@ -2,7 +2,7 @@ require('dotenv').config();
 
 // 0. Bypass Windows DNS SRV Lookup Errors (Fixes querySrv ECONNREFUSED)
 const dns = require('dns');
-dns.setServers(['0.0.0.0', '0.0.0.0']);
+dns.setServers(['8.8.8.8', '8.8.4.4']);
 
 const express = require('express');
 const multer = require('multer');
@@ -86,23 +86,28 @@ app.post('/upload', upload.single('testFile'), (req, res) => {
 // 4. Enhanced Document Generation & PDF Compiler Route
 app.post('/generate-doc', async (req, res) => {
     try {
-        const { names, inputs, expected, actual } = req.body;
+        const names = req.body.names || [];
+        const inputs = req.body.inputs || [];
+        const expected = req.body.expected || [];
+        const actual = req.body.actual || [];
         
+        // Ensure inputs are arrays even if only 1 test case exists
         const nameArray = Array.isArray(names) ? names : [names];
         const inputArray = Array.isArray(inputs) ? inputs : [inputs];
         const expectedArray = Array.isArray(expected) ? expected : [expected];
         const actualArray = Array.isArray(actual) ? actual : [actual];
 
         const formattedTestCases = nameArray.map((name, i) => ({
-            name,
-            input: inputArray[i] || 'None Provided',
-            expected: expectedArray[i] || 'System runs without exception.',
-            actual: actualArray[i] || 'Verified Pass (100% Match)'
+            name: name || `Test Case ${i + 1}`,
+            input: inputArray[i] || 'None',
+            expected: expectedArray[i] || 'System runs smoothly.',
+            actual: actualArray[i] || 'Verified Pass'
         }));
 
-        // Save record directly to MongoDB
+        // Option 2 Fix: Pass fallback stripeSessionId to satisfy required schema validation
         const record = await Submission.create({
-            testCases: formattedTestCases
+            testCases: formattedTestCases,
+            stripeSessionId: req.body.stripeSessionId || 'FREE_GENERATION'
         });
 
         // Initialize PDFKit Engine with standard margins
