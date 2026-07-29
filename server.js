@@ -2,7 +2,7 @@ require('dotenv').config();
 
 // 0. Bypass Windows DNS SRV Lookup Errors (Fixes querySrv ECONNREFUSED)
 const dns = require('dns');
-dns.setServers(['8.8.8.8', '8.8.4.4']);
+dns.setServers(['0.0.0.0', '0.0.0.0']);
 
 const express = require('express');
 const multer = require('multer');
@@ -197,4 +197,7 @@ app.post('/generate-doc', async (req, res) => {
 
 // 5. Start Server Listener Engine
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`🚀 Production Engine Online on port ${PORT}`));
+
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});
