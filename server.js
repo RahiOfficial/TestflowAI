@@ -194,9 +194,11 @@ app.post('/generate-doc', async (req, res) => {
 
         doc.end();
 
-    } catch (err) {
+    }  catch (err) {
         console.error("Error generating documentation:", err);
-        res.status(500).send("Internal Server Error compiling documentation.");
+        // Returns the exact error message to the browser for debugging
+        res.status(500).send(`Internal Server Error compiling documentation: ${err.message}`);
+    
     }
 });
 
